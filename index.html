@@ -812,6 +812,11 @@
         outline-offset: -6px;
         border-radius: 16px;
       }
+      dialog.is-flap-open .envelope-trigger:focus-visible,
+      dialog.is-opened .envelope-trigger:focus-visible,
+      #letter-title:focus {
+        outline: none;
+      }
       .letter-content {
         display: flex;
         position: absolute;
@@ -1437,21 +1442,27 @@
           letter.classList.add("is-closing-paper");
           letter.classList.remove("is-opened");
           letter.classList.remove("is-flap-open");
-          phaseTimer = setTimeout(() => {
-            if (envelopePhase !== "closing-paper") return;
-            envelopePhase = "closing-dialog";
-            closeDialog();
-          }, reducedMotion.matches ? 0 : 460);
+          phaseTimer = setTimeout(
+            () => {
+              if (envelopePhase !== "closing-paper") return;
+              envelopePhase = "closing-dialog";
+              closeDialog();
+            },
+            reducedMotion.matches ? 0 : 460,
+          );
           return;
         }
         if (envelopePhase === "flap-opening") {
           envelopePhase = "closing-flap";
           letter.classList.remove("is-flap-open");
-          phaseTimer = setTimeout(() => {
-            if (envelopePhase !== "closing-flap") return;
-            envelopePhase = "closing-dialog";
-            closeDialog();
-          }, reducedMotion.matches ? 0 : 420);
+          phaseTimer = setTimeout(
+            () => {
+              if (envelopePhase !== "closing-flap") return;
+              envelopePhase = "closing-dialog";
+              closeDialog();
+            },
+            reducedMotion.matches ? 0 : 420,
+          );
           return;
         }
         envelopePhase = "closing-dialog";
@@ -1579,27 +1590,38 @@
         if (!letter.open || envelopePhase !== "envelope") return;
         envelopePhase = "flap-opening";
         letter.classList.add("is-flap-open");
-        phaseTimer = setTimeout(() => {
-          if (envelopePhase !== "flap-opening") return;
-          envelopePhase = "paper-opening";
-          document
-            .querySelector(".letter-content")
-            .setAttribute("aria-hidden", "false");
-          letter.classList.add("is-opened");
-          document.querySelector("#letter-title").focus({ preventScroll: true });
-          phaseTimer = setTimeout(() => {
-            if (envelopePhase !== "paper-opening") return;
-            envelopePhase = "open";
-            startTyping();
-          }, reducedMotion.matches ? 0 : 800);
-        }, reducedMotion.matches ? 0 : 420);
+        phaseTimer = setTimeout(
+          () => {
+            if (envelopePhase !== "flap-opening") return;
+            envelopePhase = "paper-opening";
+            document
+              .querySelector(".letter-content")
+              .setAttribute("aria-hidden", "false");
+            letter.classList.add("is-opened");
+            document
+              .querySelector("#letter-title")
+              .focus({ preventScroll: true });
+            phaseTimer = setTimeout(
+              () => {
+                if (envelopePhase !== "paper-opening") return;
+                envelopePhase = "open";
+                startTyping();
+              },
+              reducedMotion.matches ? 0 : 800,
+            );
+          },
+          reducedMotion.matches ? 0 : 420,
+        );
       }
       function openLetter() {
         if (letter.open || openTimer !== null) return;
-        openTimer = setTimeout(() => {
-          openTimer = null;
-          showLetter();
-        }, reducedMotion.matches ? 0 : 460);
+        openTimer = setTimeout(
+          () => {
+            openTimer = null;
+            showLetter();
+          },
+          reducedMotion.matches ? 0 : 460,
+        );
       }
       document
         .querySelector(".envelope-trigger")
