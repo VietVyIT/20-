@@ -619,8 +619,57 @@
       }
       @media (max-width: 600px) {
         .rose-garden {
-          margin-top: calc(100svh - 884px);
+          margin-top: 0;
           height: 300px;
+        }
+        main {
+          padding-bottom: 16px;
+        }
+        .garden-art {
+          -webkit-mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(0, 0, 0, 0.55) 9%,
+            #000 18%
+          );
+          mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(0, 0, 0, 0.55) 9%,
+            #000 18%
+          );
+        }
+        .garden-art img {
+          height: 145%;
+          object-position: center bottom;
+        }
+        .art {
+          width: 100%;
+        }
+      }
+      @media (max-width: 600px) and (max-height: 700px) {
+        main {
+          padding-top: 84px;
+          padding-bottom: 10px;
+        }
+        .eyebrow {
+          margin-bottom: 6px;
+        }
+        h1 {
+          font-size: clamp(30px, 9vw, 35px);
+          line-height: 1.08;
+        }
+        .art {
+          height: clamp(190px, 34svh, 245px);
+          margin-top: 8px;
+        }
+        .intro {
+          margin: 2px 0 8px;
+          font-size: 13px;
+          line-height: 1.55;
+        }
+        .intro br {
+          display: none;
         }
       }
       main footer {
@@ -642,7 +691,7 @@
       }
       @media (max-width: 600px) {
         main footer {
-          bottom: max(96px, calc(env(safe-area-inset-bottom) + 14dvh));
+          display: none;
         }
       }
       dialog {
@@ -1508,7 +1557,7 @@
         { threshold: 0.15 },
       ).observe(roseSection);
       const letterCopy =
-        "Mong bạn luôn có thật nhiều niềm vui,\nđủ bình yên để mỉm cười,\nđủ tự tin để theo đuổi điều mình yêu,\nvà luôn được trân trọng vì chính bạn.\n\nChúc bạn luôn rạng rỡ, hạnh phúc và nở hoa theo cách riêng của mình. Bạn xứng đáng được yêu thương — hôm nay và mỗi ngày.";
+        "Vvy chúc chị em luôn có thật nhiều niềm vui,\nđủ bình yên để mỉm cười,\nđủ tự tin để theo đuổi điều mình yêu,\nvà luôn được trân trọng .\nChúc chị em luôn rạng rỡ, hạnh phúc và nở hoa theo cách riêng của mình. VVy mong chị em luôn được yêu thương — hôm nay và mỗi ngày.";
       const signoffLines = [
         [document.querySelector(".sign"), "Gửi bạn cả một vườn yêu thương ♡"],
         [document.querySelector(".sign-label"), "Kí tên"],
