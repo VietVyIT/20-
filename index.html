@@ -640,6 +640,11 @@
         text-align: center;
         line-height: 1.5;
       }
+      @media (max-width: 600px) {
+        main footer {
+          bottom: max(96px, calc(env(safe-area-inset-bottom) + 14dvh));
+        }
+      }
       dialog {
         width: min(440px, calc(100vw - 32px));
         max-width: 440px;
