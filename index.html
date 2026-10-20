@@ -85,18 +85,163 @@
       }
       .art {
         position: relative;
+        isolation: isolate;
+        --heart-scale: 1;
         width: min(580px, 95vw);
         height: clamp(290px, 42vh, 420px);
         margin: 2px 0;
+      }
+      .photo-orbit {
+        position: absolute;
+        z-index: 3;
+        inset: 0;
+        pointer-events: none;
+      }
+      .orbit-photo {
+        position: absolute;
+        top: var(--photo-y);
+        left: var(--photo-x);
+        width: clamp(58px, 5.8vw, 76px);
+        aspect-ratio: 0.76;
+        padding: 5px 5px 15px;
+        border: 1px solid #eadfe0;
+        background: #fffefd;
+        box-shadow: 0 5px 16px #643c4524;
+        rotate: var(--rest-angle, 0deg);
+        translate: -50% -50%;
+        pointer-events: auto;
+        animation: photo-hover var(--float-duration, 6.4s) ease-in-out
+          var(--float-delay, 0s) infinite alternate;
+      }
+      .polaroid {
+        display: block;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        overflow: hidden;
+        border: 0;
+        background: #fffefd;
+        cursor: pointer;
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+      }
+      .polaroid img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: #fffefd;
+        object-fit: cover;
+        opacity: 0;
+        filter: contrast(1.05) saturate(1.05);
+        transition: opacity 300ms ease;
+      }
+      .polaroid img.is-loaded {
+        opacity: 1;
+      }
+      .polaroid:focus-visible {
+        outline: 2px solid #ae536a;
+        outline-offset: 3px;
+      }
+      .polaroid.is-flipping {
+        animation: polaroid-flip 850ms cubic-bezier(0.25, 0.7, 0.25, 1);
+      }
+      #falling-photos {
+        position: fixed;
+        z-index: 1;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .falling-photo {
+        position: absolute;
+        top: 0;
+        width: var(--fall-size, clamp(42px, 5vw, 62px));
+        aspect-ratio: 0.76;
+        padding: 4px 4px 12px;
+        border: 1px solid #eadfe0;
+        background: #fffefd;
+        box-shadow: 0 4px 14px #643c4524;
+        opacity: 0;
+        will-change: translate, rotate, opacity;
+      }
+      .falling-photo.is-falling {
+        animation: photo-fall var(--fall-duration, 15s) linear
+          var(--fall-delay, 0s) both;
+      }
+      .falling-photo.is-resetting {
+        animation: none !important;
+        opacity: 0 !important;
+      }
+      .falling-photo img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: #fffefd;
+        object-fit: cover;
+        visibility: hidden;
+      }
+      .falling-photo img.is-loaded {
+        visibility: visible;
+      }
+      .falling-photo img:not(.is-loaded) {
+        visibility: hidden;
+      }
+      @keyframes photo-hover {
+        from {
+          transform: translateY(-2px);
+        }
+        to {
+          transform: translateY(-8px);
+        }
+      }
+      @keyframes polaroid-flip {
+        0% {
+          transform: rotateY(0);
+        }
+        100% {
+          transform: rotateY(360deg);
+        }
+      }
+      @keyframes photo-fall {
+        0% {
+          translate: 0 calc(-100% - 140px);
+          rotate: var(--start-rotation);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.8;
+        }
+        32% {
+          translate: var(--drift) 32vh;
+          rotate: var(--middle-rotation);
+          opacity: 0.8;
+        }
+        68% {
+          translate: var(--drift-end) 68vh;
+          rotate: var(--end-rotation);
+          opacity: 0.8;
+        }
+        92% {
+          opacity: 0.8;
+        }
+        100% {
+          translate: var(--drift-end) calc(100vh + 160px);
+          rotate: var(--final-rotation);
+          opacity: 0;
+        }
       }
       #garden {
         width: 100%;
         height: 100%;
         display: block;
+        position: relative;
+        z-index: 1;
+        pointer-events: none;
       }
       .heart-button {
         position: absolute;
         inset: 0;
+        z-index: 2;
         border: 0;
         background: transparent;
         cursor: pointer;
@@ -109,9 +254,9 @@
       }
       .center {
         position: absolute;
+        z-index: 2;
         left: 50%;
         top: 48%;
-        z-index: 1;
         transform: translate(-50%, -50%);
         pointer-events: none;
         font-family: Georgia, serif;
@@ -119,12 +264,6 @@
         color: #ae536a;
         font-size: clamp(18px, 3vw, 24px);
         line-height: 1.5;
-        width: max-content;
-        max-width: calc(100% - 24px);
-        padding: 8px 14px 10px;
-        border-radius: 999px;
-        background: rgb(255 248 242 / 92%);
-        box-shadow: 0 0 0 5px rgb(255 248 242 / 56%);
       }
       .center small {
         font-family: Arial, sans-serif;
@@ -626,57 +765,8 @@
       }
       @media (max-width: 600px) {
         .rose-garden {
-          margin-top: 0;
+          margin-top: -160px;
           height: 300px;
-        }
-        main {
-          padding-bottom: 16px;
-        }
-        .garden-art {
-          -webkit-mask-image: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(0, 0, 0, 0.55) 9%,
-            #000 18%
-          );
-          mask-image: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(0, 0, 0, 0.55) 9%,
-            #000 18%
-          );
-        }
-        .garden-art img {
-          height: 145%;
-          object-position: center bottom;
-        }
-        .art {
-          width: 100%;
-        }
-      }
-      @media (max-width: 600px) and (max-height: 700px) {
-        main {
-          padding-top: 84px;
-          padding-bottom: 10px;
-        }
-        .eyebrow {
-          margin-bottom: 6px;
-        }
-        h1 {
-          font-size: clamp(30px, 9vw, 35px);
-          line-height: 1.08;
-        }
-        .art {
-          height: clamp(190px, 34svh, 245px);
-          margin-top: 8px;
-        }
-        .intro {
-          margin: 2px 0 8px;
-          font-size: 13px;
-          line-height: 1.55;
-        }
-        .intro br {
-          display: none;
         }
       }
       main footer {
@@ -695,11 +785,6 @@
         box-shadow: 0 4px 18px #643c4512;
         text-align: center;
         line-height: 1.5;
-      }
-      @media (max-width: 600px) {
-        main footer {
-          display: none;
-        }
       }
       dialog {
         width: min(440px, calc(100vw - 32px));
@@ -872,11 +957,6 @@
         outline: 2px dashed #b85c7e;
         outline-offset: -6px;
         border-radius: 16px;
-      }
-      dialog.is-flap-open .envelope-trigger:focus-visible,
-      dialog.is-opened .envelope-trigger:focus-visible,
-      #letter-title:focus {
-        outline: none;
       }
       .letter-content {
         display: flex;
@@ -1109,6 +1189,44 @@
           transform: translateX(-50%) rotateX(180deg);
         }
       }
+      @media (max-width: 600px) {
+        .art {
+          width: min(560px, 100%);
+        }
+        .orbit-photo {
+          width: clamp(42px, 13vw, 52px);
+          padding: 4px 4px 12px;
+        }
+        .art {
+          --heart-scale: 0.78;
+        }
+        .falling-photo {
+          width: var(--fall-size, 42px);
+        }
+      }
+      @media (max-width: 360px) {
+        .art {
+          --heart-scale: 0.7;
+        }
+        .orbit-photo {
+          width: clamp(36px, 10vw, 42px);
+          padding: 3px 3px 10px;
+        }
+        .center small {
+          font-size: 8px;
+          letter-spacing: 0.8px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .orbit-photo,
+        .polaroid.is-flipping,
+        .falling-photo {
+          animation: none !important;
+        }
+        #falling-photos {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1117,10 +1235,16 @@
       ><span class="date">20 tháng 10</span>
     </header>
     <canvas id="petals" aria-hidden="true"></canvas>
+    <div id="falling-photos" aria-hidden="true"></div>
     <main>
       <p class="eyebrow">MỪNG NGÀY PHỤ NỮ VIỆT NAM</p>
       <h1>Một vườn hoa,<br /><em>dành riêng cho bạn.</em></h1>
       <div class="art">
+        <div
+          class="photo-orbit"
+          id="photo-orbit"
+          aria-label="Ảnh kỷ niệm quanh trái tim"
+        ></div>
         <canvas id="garden" aria-hidden="true"></canvas>
         <div class="center">
           Bạn xứng đáng<br />được yêu thương.<small>HÔM NAY & MỖI NGÀY</small>
@@ -1306,7 +1430,13 @@
         petals.height = Math.round(ph * d);
         p.setTransform(petals.width / pw, 0, 0, petals.height / ph, 0, 0);
         blooms = [];
-        const scale = Math.min(w / 39, h / 37);
+        const scale =
+          Math.min(w / 39, h / 37) *
+          parseFloat(
+            getComputedStyle(document.querySelector(".art")).getPropertyValue(
+              "--heart-scale",
+            ),
+          );
         for (let i = 0; i < 145; i++) {
           let a = (i / 145) * Math.PI * 2;
           let x = 16 * Math.pow(Math.sin(a), 3),
@@ -1339,19 +1469,25 @@
         }
       }
       function petalTarget() {
-        return Math.min(650, Math.max(180, Math.round((pw * ph) / 2100)));
+        return Math.min(220, Math.max(46, Math.round((pw * ph) / 8000)));
       }
       function spawn(x = rand(0, pw), y = -20, burst = false) {
         const depth = Math.random();
+        const kind = !burst && Math.random() < 0.28 ? "leaf" : "petal";
+        const leafPalette = ["#91a788", "#b1ad7e", "#c8b782"];
         particles.push({
           x,
           y,
-          vx: burst ? rand(-3, 3) : rand(-0.28, 0.28),
-          vy: burst ? rand(-3, 1) : 0.5 + depth * 1.15,
-          r: burst ? rand(3, 8) : 1.8 + depth * 4.8,
+          vx: burst ? rand(-3, 3) : rand(-0.22, 0.22),
+          vy: burst ? rand(-3, 1) : 0.42 + depth * 0.95,
+          r: burst ? rand(3, 8) : 2 + depth * 4.2,
           a: rand(0, 6),
           spin: rand(-0.018, 0.018),
-          col: palette[Math.floor(rand(0, palette.length))],
+          kind,
+          col:
+            kind === "leaf"
+              ? leafPalette[Math.floor(rand(0, leafPalette.length))]
+              : palette[Math.floor(rand(0, palette.length))],
           opacity: burst ? 0.8 : 0.25 + depth * 0.4,
           phase: rand(0, Math.PI * 2),
           life: burst ? 250 : Infinity,
@@ -1367,16 +1503,30 @@
           p.fillStyle = b.col;
           p.globalAlpha = (b.burst ? Math.min(1, b.life / 50) : 1) * b.opacity;
           p.beginPath();
-          p.ellipse(
-            0,
-            0,
-            b.r,
-            b.r * (0.36 + 0.18 * Math.abs(Math.cos(b.a))),
-            0,
-            0,
-            7,
-          );
+          if (b.kind === "leaf") {
+            p.moveTo(0, -b.r * 1.5);
+            p.quadraticCurveTo(b.r * 1.1, -b.r * 0.45, 0, b.r * 1.5);
+            p.quadraticCurveTo(-b.r * 0.95, b.r * 0.2, 0, -b.r * 1.5);
+          } else {
+            p.ellipse(
+              0,
+              0,
+              b.r,
+              b.r * (0.36 + 0.18 * Math.abs(Math.cos(b.a))),
+              0,
+              0,
+              7,
+            );
+          }
           p.fill();
+          if (b.kind === "leaf") {
+            p.beginPath();
+            p.moveTo(0, -b.r * 1.1);
+            p.lineTo(0, b.r * 1.05);
+            p.strokeStyle = "#fff8df66";
+            p.lineWidth = 0.6;
+            p.stroke();
+          }
           p.restore();
         }
       }
@@ -1420,6 +1570,147 @@
       const heartButton = document.querySelector("#heart");
       const heartArt = document.querySelector(".art");
       const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+      const photoSources = [
+        "asset/img/1792464776580_66386711827906727_731500309883078506_24310f79266a8df9ee48cf9b43e46b63.jpg",
+        "asset/img/1792464776609_66386711827906727_731500309883078506_589078a78a1784955ebb33618b5767ae.jpg",
+        "asset/img/1792464902308_66386711827906727_731500309883078506_6045e026e9afa0d754cabe72001a296c.jpg",
+        "asset/img/1792464902339_66386711827906727_731500309883078506_fe85ddfafa091f3bf342aeab6e68b480.jpg",
+        "asset/img/1792464902377_66386711827906727_731500309883078506_89fbc8a1002d87e78aa97928321f669f.jpg",
+        "asset/img/IMG_2750.JPG",
+        "asset/img/IMG_8671.PNG",
+      ];
+      function createPhotoImage(source) {
+        const image = document.createElement("img");
+        image.alt = "";
+        image.setAttribute("aria-hidden", "true");
+        image.addEventListener("load", () => {
+          if (image.naturalWidth > 0) image.classList.add("is-loaded");
+        });
+        image.addEventListener(
+          "error",
+          () => {
+            image.removeAttribute("src");
+            image.classList.remove("is-loaded");
+          },
+          { once: true },
+        );
+        image.src = source;
+        return image;
+      }
+      function buildPhotoFrames() {
+        const orbit = document.querySelector("#photo-orbit");
+        const falling = document.querySelector("#falling-photos");
+        const isMobile = matchMedia("(max-width: 600px)").matches;
+        const orbitPoints = isMobile
+          ? [
+              [20, 12],
+              [8, 37],
+              [8, 63],
+              [20, 88],
+              [80, 12],
+              [92, 37],
+              [92, 63],
+              [80, 88],
+            ]
+          : [
+              [17, 12],
+              [6, 37],
+              [6, 63],
+              [17, 88],
+              [83, 12],
+              [94, 37],
+              [94, 63],
+              [83, 88],
+            ];
+        const angles = [-12, -6, 7, 13, 12, 6, -7, -13];
+        orbit.replaceChildren();
+        falling.replaceChildren();
+        orbitPoints.forEach((_, index) => {
+          const source = photoSources[index % photoSources.length];
+          const frame = document.createElement("div");
+          frame.className = "orbit-photo";
+          frame.style.setProperty("--photo-x", `${orbitPoints[index][0]}%`);
+          frame.style.setProperty("--photo-y", `${orbitPoints[index][1]}%`);
+          frame.style.setProperty("--rest-angle", `${angles[index]}deg`);
+          frame.style.setProperty(
+            "--float-duration",
+            `${6 + (index % 4) * 0.65}s`,
+          );
+          frame.style.setProperty("--float-delay", `${-index * 0.57}s`);
+
+          const button = document.createElement("button");
+          button.className = "polaroid";
+          button.type = "button";
+          button.setAttribute("aria-label", `Xoay khung ảnh ${index + 1}`);
+          button.append(createPhotoImage(source));
+          button.addEventListener("click", () => {
+            if (
+              reducedMotion.matches ||
+              button.classList.contains("is-flipping")
+            )
+              return;
+            button.classList.add("is-flipping");
+          });
+          button.addEventListener("animationend", () => {
+            button.classList.remove("is-flipping");
+          });
+          frame.append(button);
+          orbit.append(frame);
+        });
+
+        if (reducedMotion.matches) return;
+        const fallingCount = isMobile ? 12 : 22;
+        const randomizeFallingFrame = (frame) => {
+          const onLeft = Math.random() < 0.5;
+          const x = onLeft ? 2 + Math.random() * 14 : 84 + Math.random() * 14;
+          const duration = 12 + Math.random() * 8;
+          const angle = () => `${Math.round(-24 + Math.random() * 48)}deg`;
+          frame.style.left = `${x}%`;
+          frame.style.setProperty("--drift", `${-4 + Math.random() * 8}vw`);
+          frame.style.setProperty("--drift-end", `${-4 + Math.random() * 8}vw`);
+          frame.style.setProperty("--start-rotation", angle());
+          frame.style.setProperty("--middle-rotation", angle());
+          frame.style.setProperty("--end-rotation", angle());
+          frame.style.setProperty("--final-rotation", angle());
+          frame.style.setProperty("--fall-duration", `${duration}s`);
+          return duration;
+        };
+        const startFallingFrame = (frame, delay = 0) => {
+          frame.style.setProperty("--fall-delay", `${delay}s`);
+          frame.classList.remove("is-falling");
+          frame.classList.add("is-resetting");
+          void frame.offsetWidth;
+          frame.classList.remove("is-resetting");
+          frame.classList.add("is-falling");
+        };
+        for (let index = 0; index < fallingCount; index++) {
+          const frame = document.createElement("div");
+          frame.className = "falling-photo";
+          const size = isMobile
+            ? 32 + Math.random() * 12
+            : 42 + Math.random() * 22;
+          frame.style.setProperty("--fall-size", `${size}px`);
+          frame.append(
+            createPhotoImage(photoSources[index % photoSources.length]),
+          );
+          const duration = randomizeFallingFrame(frame);
+          frame.addEventListener("animationend", (event) => {
+            if (event.target !== frame) return;
+            randomizeFallingFrame(frame);
+            startFallingFrame(frame);
+          });
+          startFallingFrame(frame, -Math.random() * duration);
+          falling.append(frame);
+        }
+      }
+      buildPhotoFrames();
+      let photoLayoutMobile = matchMedia("(max-width: 600px)").matches;
+      addEventListener("resize", () => {
+        const isMobile = matchMedia("(max-width: 600px)").matches;
+        if (isMobile === photoLayoutMobile) return;
+        photoLayoutMobile = isMobile;
+        buildPhotoFrames();
+      });
       let typingTimer,
         typeStartTimer = null,
         openTimer = null,
@@ -1564,7 +1855,7 @@
         { threshold: 0.15 },
       ).observe(roseSection);
       const letterCopy =
-        "VVy chúc chị em luôn có thật nhiều niềm vui,\nbình yên trong lòng và nụ cười trên môi,\nluôn tự tin theo đuổi những điều mình yêu thích \nvà luôn được yêu thương, trân trọng .\nChúc chị em luôn rạng rỡ, hạnh phúc và nở hoa theo cách riêng của mình — hôm nay và mỗi ngày. 💐";
+        "Mong bạn luôn có thật nhiều niềm vui,\nđủ bình yên để mỉm cười,\nđủ tự tin để theo đuổi điều mình yêu,\nvà luôn được trân trọng vì chính bạn.\n\nChúc bạn luôn rạng rỡ, hạnh phúc và nở hoa theo cách riêng của mình. Bạn xứng đáng được yêu thương — hôm nay và mỗi ngày.";
       const signoffLines = [
         [document.querySelector(".sign"), "Gửi bạn cả một vườn yêu thương ♡"],
         [document.querySelector(".sign-label"), "Kí tên"],
