@@ -111,6 +111,7 @@
         position: absolute;
         left: 50%;
         top: 48%;
+        z-index: 1;
         transform: translate(-50%, -50%);
         pointer-events: none;
         font-family: Georgia, serif;
@@ -118,6 +119,12 @@
         color: #ae536a;
         font-size: clamp(18px, 3vw, 24px);
         line-height: 1.5;
+        width: max-content;
+        max-width: calc(100% - 24px);
+        padding: 8px 14px 10px;
+        border-radius: 999px;
+        background: rgb(255 248 242 / 92%);
+        box-shadow: 0 0 0 5px rgb(255 248 242 / 56%);
       }
       .center small {
         font-family: Arial, sans-serif;
@@ -1557,7 +1564,7 @@
         { threshold: 0.15 },
       ).observe(roseSection);
       const letterCopy =
-        "Vvy chúc chị em luôn có thật nhiều niềm vui,\nđủ bình yên để mỉm cười,\nđủ tự tin để theo đuổi điều mình yêu,\nvà luôn được trân trọng .\nChúc chị em luôn rạng rỡ, hạnh phúc và nở hoa theo cách riêng của mình. VVy mong chị em luôn được yêu thương — hôm nay và mỗi ngày.";
+        "VVy chúc chị em luôn có thật nhiều niềm vui,\nbình yên trong lòng và nụ cười trên môi,\nluôn tự tin theo đuổi những điều mình yêu thích \nvà luôn được yêu thương, trân trọng .\nChúc chị em luôn rạng rỡ, hạnh phúc và nở hoa theo cách riêng của mình — hôm nay và mỗi ngày. 💐";
       const signoffLines = [
         [document.querySelector(".sign"), "Gửi bạn cả một vườn yêu thương ♡"],
         [document.querySelector(".sign-label"), "Kí tên"],
